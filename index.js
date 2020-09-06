@@ -10,8 +10,8 @@ const {Docker} = require('node-docker-api');
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 const fs = require('fs')
 
-// cors 허용
-app.all('/*', function(req, res, next) {
+// cors 허용 
+app.all('/*', function(req, res, next) {   
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
   next();
@@ -66,7 +66,7 @@ app.post('/create', async (req, res)=>{
   else if(req.body.image == "jaspeen/oracle-xe-11g") {
     createData = await createContainerForOracle11g(req.body.name, req.body.port, req.body.image, req.body.tag)
   }
-
+  console.log(createData);
   let filterData = await getContainerById(createData.data.Id);
   filterData = getContainerFilterData(filterData);
 
@@ -201,7 +201,7 @@ async function createContainer(name, password, port, image, tag) {
       HostConfig: {
         PortBindings: {"3306/tcp": [{"HostPort": port}]}
       }
-    }).then(container => container.start());
+    }).then(container => container.start()).catch(err => console.log(err));
   
     return container;
   } catch(error) {
@@ -221,7 +221,7 @@ async function createContainerForOracle11g(name, port, image, tag) {
       HostConfig: {
         PortBindings: {"1521/tcp": [{"HostPort": port}]}
       }
-    }).then(container => container.start());
+    }).then(container => container.start()).catch(err => console.log(err));
 
     return container;
   } catch(error) {
